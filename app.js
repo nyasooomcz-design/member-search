@@ -236,14 +236,13 @@ function extractAccountId(toStr) {
 }
 
 // ===== Parse Tools Sheet =====
-// ヘッダー3行 + データ行の構造: 名前, PC①, PC②, Office, ...ツール名...
+// Row 0: 凡例, Row 1: 大カテゴリ, Row 2: 中カテゴリ, Row 3: ツール名, Row 4: フィルタ行, Row 5: ヘッダー行, Row 6+: データ
 function parseToolsSheet(text) {
   const rows = parseCSVRows(text);
-  if (rows.length < 4) return {};
+  if (rows.length < 7) return {};
 
-  // 2行目: カテゴリ（大分類）、3行目: ツール名（小分類）
-  const categories = rows[1];
-  const toolNames = rows[2];
+  const categories = rows[1];   // 大カテゴリ
+  const toolNames = rows[3];    // 実際のツール名
 
   // カテゴリ名を前方の値で埋める（結合セル対応）
   let lastCat = '';
@@ -252,29 +251,38 @@ function parseToolsSheet(text) {
     else categories[i] = lastCat;
   }
 
-  // 名前 → ツール配列 のマップ生成
+  // PC①②やプラン列など、ツールではない列を除外
+  const skipCols = new Set();
+  for (let j = 0; j < toolNames.length; j++) {
+    const tn = (toolNames[j] || '').trim();
+    if (!tn || /^(名前|PC[①②]|プラン|Office|フィルタ)/.test(tn)) skipCols.add(j);
+  }
+
+  // 名前 → ツール配列 のマップ生成（Row 6以降がデータ）
   const map = {};
-  for (let i = 3; i < rows.length; i++) {
+  for (let i = 6; i < rows.length; i++) {
     const r = rows[i];
     const name = (r[0] || '').trim();
     if (!name) continue;
 
     const tools = [];
     for (let j = 1; j < r.length; j++) {
+      if (skipCols.has(j)) continue;
       const val = (r[j] || '').trim();
-      if (!val) continue;
-      // PCやOffice等の情報列はスキップ（◎〇▲を含む値のみ）
-      if (!/[◎〇▲]/.test(val)) continue;
+      if (!val || !/[◎〇▲]/.test(val)) continue;
 
       const toolName = (toolNames[j] || '').trim();
       if (!toolName) continue;
 
-      // レベルを抽出（複数ある場合は最高レベル）
+      // 括弧や注釈を除去してクリーンなツール名にする
+      const cleanName = toolName.replace(/[\s　]*[※（(].*/g, '').trim();
+      if (!cleanName) continue;
+
       let level = '▲';
       if (val.includes('◎')) level = '◎';
       else if (val.includes('〇')) level = '〇';
 
-      tools.push({ name: toolName, level, category: (categories[j] || '').trim() });
+      tools.push({ name: cleanName, level, category: (categories[j] || '').trim() });
     }
     map[name] = tools;
   }
