@@ -75,10 +75,32 @@ const CATEGORIES = {
   '労務・人事': ['給与計算', '社会保険', '労働保険', '労務', '人事', '採用'],
 };
 
+// Region mapping (prefecture → region)
+const REGIONS = {
+  '北海道・東北': ['北海道', '青森', '岩手', '宮城', '秋田', '山形', '福島'],
+  '関東': ['東京', '神奈川', '埼玉', '千葉', '茨城', '栃木', '群馬'],
+  '中部': ['新潟', '富山', '石川', '福井', '山梨', '長野', '岐阜', '静岡', '愛知'],
+  '近畿': ['三重', '滋賀', '京都', '大阪', '兵庫', '奈良', '和歌山'],
+  '中国・四国': ['鳥取', '島根', '岡山', '広島', '山口', '徳島', '香川', '愛媛', '高知'],
+  '九州・沖縄': ['福岡', '佐賀', '長崎', '熊本', '大分', '宮崎', '鹿児島', '沖縄'],
+};
+
+function getRegion(prefecture) {
+  if (!prefecture) return null;
+  // 「県」「府」「都」を除去して比較
+  const norm = prefecture.replace(/(都|府|県)$/, '');
+  for (const [region, prefs] of Object.entries(REGIONS)) {
+    if (prefs.some(p => norm.includes(p) || prefecture.includes(p))) return region;
+  }
+  // 日本の都道府県にマッチしなければ海外
+  return '海外';
+}
+
 // ===== State =====
 let allMembers = [];
 let filteredMembers = [];
 let activeCategory = 'all';
+let activeRegion = 'all';
 
 // ===== Init =====
 document.addEventListener('DOMContentLoaded', fetchData);
@@ -98,7 +120,6 @@ async function fetchData() {
     const res = await fetch(CSV_URL);
     const text = await res.text();
     allMembers = parseCSV(text);
-    populatePrefectureDropdown();
     applyFilters();
 
     const now = new Date();
@@ -197,19 +218,12 @@ function extractAccountId(toStr) {
   return m ? parseInt(m[1], 10) : null;
 }
 
-// ===== Prefecture Dropdown =====
-function populatePrefectureDropdown() {
-  const select = document.getElementById('prefectureFilter');
-  const prefs = [...new Set(allMembers.map(m => m.prefecture).filter(p => p))].sort();
-
-  // Clear existing options except first
-  select.innerHTML = '<option value="">居住地で絞り込み...</option>';
-  for (const p of prefs) {
-    const opt = document.createElement('option');
-    opt.value = p;
-    opt.textContent = p;
-    select.appendChild(opt);
-  }
+// ===== Region Filter =====
+function setRegion(btn) {
+  document.querySelectorAll('.btn-region').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeRegion = btn.dataset.region;
+  applyFilters();
 }
 
 // ===== Filters =====
@@ -223,7 +237,6 @@ function setCategory(btn) {
 function applyFilters() {
   const nameQuery = document.getElementById('nameSearch').value.trim().toLowerCase();
   const skillQuery = document.getElementById('skillSearch').value.trim().toLowerCase();
-  const prefQuery = document.getElementById('prefectureFilter').value;
 
   filteredMembers = allMembers.filter(m => {
     // Name filter
@@ -232,8 +245,11 @@ function applyFilters() {
     // Skill text filter (searches skills + intro)
     if (skillQuery && !m.skills.toLowerCase().includes(skillQuery) && !m.intro.toLowerCase().includes(skillQuery)) return false;
 
-    // Prefecture filter
-    if (prefQuery && m.prefecture !== prefQuery) return false;
+    // Region filter
+    if (activeRegion !== 'all') {
+      const memberRegion = getRegion(m.prefecture);
+      if (memberRegion !== activeRegion) return false;
+    }
 
     // Category filter — skills列のみで判定
     if (activeCategory !== 'all') {

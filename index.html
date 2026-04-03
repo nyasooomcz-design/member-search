@@ -39,16 +39,24 @@
           <svg class="icon-search" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
           <input type="text" id="skillSearch" placeholder="スキルで検索..." oninput="applyFilters()">
         </div>
-        <div class="search-box select-box">
-          <svg class="icon-search" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
-          <select id="prefectureFilter" onchange="applyFilters()">
-            <option value="">居住地で絞り込み...</option>
-          </select>
-        </div>
+      </div>
+
+      <!-- Region Buttons -->
+      <div class="region-row">
+        <span class="row-label">地方</span>
+        <button class="btn btn-region active" data-region="all" onclick="setRegion(this)">全て</button>
+        <button class="btn btn-region" data-region="北海道・東北" onclick="setRegion(this)">北海道・東北</button>
+        <button class="btn btn-region" data-region="関東" onclick="setRegion(this)">関東</button>
+        <button class="btn btn-region" data-region="中部" onclick="setRegion(this)">中部</button>
+        <button class="btn btn-region" data-region="近畿" onclick="setRegion(this)">近畿</button>
+        <button class="btn btn-region" data-region="中国・四国" onclick="setRegion(this)">中国・四国</button>
+        <button class="btn btn-region" data-region="九州・沖縄" onclick="setRegion(this)">九州・沖縄</button>
+        <button class="btn btn-region" data-region="海外" onclick="setRegion(this)">海外</button>
       </div>
 
       <!-- Category Buttons -->
       <div class="category-row">
+        <span class="row-label">スキル</span>
         <button class="btn btn-cat active" data-cat="all" onclick="setCategory(this)">全て</button>
         <button class="btn btn-cat" data-cat="デザイン" onclick="setCategory(this)">デザイン</button>
         <button class="btn btn-cat" data-cat="経理" onclick="setCategory(this)">経理</button>
