@@ -62,7 +62,7 @@ const AVATARS = {
   11043374: 'https://appdata.chatwork.com/avatar/6MQ3DQGaAW.png',       // ちーこ
 };
 
-// Category keywords mapping — skills列のみで判定
+// Category keywords — skills列のみで判定
 const CATEGORIES = {
   'デザイン': ['デザイン', 'Illustrator', 'Photoshop', 'Figma', 'バナー', 'サムネイル', 'ロゴ', 'チラシ', '名刺', 'アイキャッチ'],
   '経理': ['経理', '仕訳', '入金消込', '記帳代行', '会計', '簿記', '弥生'],
@@ -76,7 +76,7 @@ const CATEGORIES = {
   '労務・人事': ['給与計算', '社会保険', '労働保険', '労務', '人事', '採用'],
 };
 
-// Region mapping (prefecture → region)
+// Region mapping
 const REGIONS = {
   '北海道・東北': ['北海道', '青森', '岩手', '宮城', '秋田', '山形', '福島'],
   '関東': ['東京', '神奈川', '埼玉', '千葉', '茨城', '栃木', '群馬'],
@@ -88,12 +88,10 @@ const REGIONS = {
 
 function getRegion(prefecture) {
   if (!prefecture) return null;
-  // 「県」「府」「都」を除去して比較
   const norm = prefecture.replace(/(都|府|県)$/, '');
   for (const [region, prefs] of Object.entries(REGIONS)) {
     if (prefs.some(p => norm.includes(p) || prefecture.includes(p))) return region;
   }
-  // 日本の都道府県にマッチしなければ海外
   return '海外';
 }
 
@@ -201,8 +199,6 @@ function parseCSV(text) {
       chatworkTo,
       accountId,
       cityUrl: (r[4] || '').trim(),
-      email: (r[5] || '').trim(),
-      displayName: (r[6] || '').trim(),
       chatworkId: (r[7] || '').trim(),
       prefecture: (r[8] || '').trim(),
       availability: (r[9] || '').trim(),
@@ -227,7 +223,7 @@ function setRegion(btn) {
   applyFilters();
 }
 
-// ===== Filters =====
+// ===== Category Filter =====
 function setCategory(btn) {
   document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -235,29 +231,24 @@ function setCategory(btn) {
   applyFilters();
 }
 
+// ===== Filters =====
 function applyFilters() {
   const nameQuery = document.getElementById('nameSearch').value.trim().toLowerCase();
   const skillQuery = document.getElementById('skillSearch').value.trim().toLowerCase();
 
   filteredMembers = allMembers.filter(m => {
-    // Name filter
     if (nameQuery && !m.name.toLowerCase().includes(nameQuery)) return false;
 
-    // Skill text filter (searches skills + intro)
     if (skillQuery && !m.skills.toLowerCase().includes(skillQuery) && !m.intro.toLowerCase().includes(skillQuery)) return false;
 
-    // Region filter
     if (activeRegion !== 'all') {
-      const memberRegion = getRegion(m.prefecture);
-      if (memberRegion !== activeRegion) return false;
+      if (getRegion(m.prefecture) !== activeRegion) return false;
     }
 
-    // Category filter — skills列のみで判定
     if (activeCategory !== 'all') {
       const keywords = CATEGORIES[activeCategory] || [];
       const text = m.skills.toLowerCase();
-      const match = keywords.some(kw => text.includes(kw.toLowerCase()));
-      if (!match) return false;
+      if (!keywords.some(kw => text.includes(kw.toLowerCase()))) return false;
     }
 
     return true;
@@ -287,12 +278,12 @@ function renderGrid() {
 }
 
 function cardHTML(m) {
-  const initial = m.name.charAt(0);
+  const initial = escHTML(m.name.charAt(0));
   const avatarUrl = m.accountId ? AVATARS[m.accountId] : null;
 
   const avatar = avatarUrl
-    ? `<img class="card-avatar" src="${escAttr(avatarUrl)}" alt="${escHTML(m.name)}" onerror="this.outerHTML='<div class=\\'card-avatar-placeholder\\'>${escHTML(initial)}</div>'">`
-    : `<div class="card-avatar-placeholder">${escHTML(initial)}</div>`;
+    ? `<img class="card-avatar" src="${escHTML(avatarUrl)}" alt="${escHTML(m.name)}" onerror="this.outerHTML='<div class=\\'card-avatar-placeholder\\'>${initial}</div>'">`
+    : `<div class="card-avatar-placeholder">${initial}</div>`;
 
   const role = m.role ? `<span class="card-role">${escHTML(m.role)}</span>` : '';
 
@@ -305,12 +296,12 @@ function cardHTML(m) {
     ? `<div class="card-skills">${skillTags.map(s => `<span class="skill-tag">${escHTML(s)}</span>`).join('')}</div>`
     : '';
 
-  const introText = m.intro ? `<div class="card-intro" id="intro-${escAttr(m.name)}">${escHTML(m.intro)}</div>
-    <button class="card-toggle-intro" onclick="toggleIntro(this)">もっと見る</button>` : '';
+  const introText = m.intro
+    ? `<div class="card-intro">${escHTML(m.intro)}</div><button class="card-toggle-intro" onclick="toggleIntro(this)">もっと見る</button>`
+    : '';
 
-  // Links & info
   const links = [];
-  if (m.cityUrl) links.push(`<a href="${escAttr(m.cityUrl)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>シティ</a>`);
+  if (m.cityUrl) links.push(`<a href="${escHTML(m.cityUrl)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>シティ</a>`);
   if (m.chatworkId) links.push(`<span class="card-chatwork-id"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>${escHTML(m.chatworkId)}</span>`);
 
   return `<div class="card">
@@ -363,8 +354,8 @@ function extractSkillTags(text) {
     [/Notion/i, 'Notion'],
     [/資料作成|マニュアル作成/i, '資料・マニュアル作成'],
     [/営業事務/i, '営業事務'],
+    [/社会保険|労働保険|労務/i, '労務'],
     [/人事|採用/i, '人事'],
-    [/給与計算|社会保険|労務/i, '労務'],
     [/イラスト/i, 'イラスト'],
     [/簿記/i, '簿記'],
   ];
@@ -422,9 +413,6 @@ function toggleIntro(btn) {
 function escHTML(s) {
   if (!s) return '';
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-function escAttr(s) {
-  return escHTML(s);
 }
 function truncate(s, max) {
   return s.length > max ? s.substring(0, max) + '...' : s;
