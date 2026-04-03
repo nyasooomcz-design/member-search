@@ -44,7 +44,7 @@ body {
   gap: 16px;
 }
 .header-mascot {
-  width: 80px;
+  width: 48px;
   height: auto;
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));
 }
@@ -369,11 +369,15 @@ body {
 }
 .card-links a:hover { text-decoration: underline; }
 .card-chatwork-id {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--text-light);
   display: flex;
   align-items: center;
   gap: 4px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 /* ===== Toast ===== */
@@ -409,7 +413,7 @@ body {
 
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
-  .header-mascot { width: 56px; }
+  .header-mascot { width: 40px; }
   .header-title { font-size: 1.3rem; }
   .header-sub { font-size: 0.85rem; }
   .search-row { flex-direction: column; }
@@ -419,7 +423,7 @@ body {
 }
 
 @media (max-width: 480px) {
-  .header-mascot { width: 48px; }
+  .header-mascot { width: 36px; }
   .header-title { font-size: 1.1rem; }
   .region-row, .category-row { gap: 6px; }
   .btn-cat, .btn-region { padding: 6px 12px; font-size: 0.8rem; }
