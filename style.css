@@ -44,7 +44,7 @@ body {
   gap: 16px;
 }
 .header-mascot {
-  width: 48px;
+  width: 64px;
   height: auto;
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.15));
 }
