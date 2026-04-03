@@ -62,6 +62,12 @@ const AVATARS = {
   11043374: 'https://appdata.chatwork.com/avatar/6MQ3DQGaAW.png',       // ちーこ
 };
 
+// [To:]未記載メンバーの名前→account_idフォールバック
+const NAME_TO_ACCOUNT = {
+  'ABB': 2160795,
+  'くまお': 5501140,
+};
+
 // Category keywords — skills列のみで判定
 const CATEGORIES = {
   'デザイン': ['デザイン', 'Illustrator', 'Photoshop', 'Figma', 'バナー', 'サムネイル', 'ロゴ', 'チラシ', '名刺', 'アイキャッチ'],
@@ -279,7 +285,8 @@ function renderGrid() {
 
 function cardHTML(m) {
   const initial = escHTML(m.name.charAt(0));
-  const avatarUrl = m.accountId ? AVATARS[m.accountId] : null;
+  const aid = m.accountId || NAME_TO_ACCOUNT[m.name];
+  const avatarUrl = aid ? AVATARS[aid] : null;
 
   const avatar = avatarUrl
     ? `<img class="card-avatar" src="${escHTML(avatarUrl)}" alt="${escHTML(m.name)}" onerror="this.outerHTML='<div class=\\'card-avatar-placeholder\\'>${initial}</div>'">`
