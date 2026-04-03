@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>リベ大オンライン秘書 メンバー検索</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=M+PLUS+1:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <h1 class="header-title">リベ大オンライン秘書<span class="header-sub">メンバー検索</span></h1>
+    </div>
+  </header>
+
+  <!-- Controls -->
+  <section class="controls">
+    <div class="controls-inner">
+      <!-- Refresh Button -->
+      <div class="refresh-row">
+        <button id="refreshBtn" class="btn btn-refresh" onclick="fetchData()">
+          <svg class="icon-refresh" viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          データ更新
+        </button>
+        <span id="lastUpdated" class="last-updated"></span>
+      </div>
+
+      <!-- Search -->
+      <div class="search-row">
+        <div class="search-box">
+          <svg class="icon-search" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="nameSearch" placeholder="名前で検索..." oninput="applyFilters()">
+        </div>
+        <div class="search-box">
+          <svg class="icon-search" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          <input type="text" id="skillSearch" placeholder="スキルで検索..." oninput="applyFilters()">
+        </div>
+      </div>
+
+      <!-- Category Buttons -->
+      <div class="category-row">
+        <button class="btn btn-cat active" data-cat="all" onclick="setCategory(this)">全て</button>
+        <button class="btn btn-cat" data-cat="デザイン" onclick="setCategory(this)">デザイン</button>
+        <button class="btn btn-cat" data-cat="経理" onclick="setCategory(this)">経理</button>
+        <button class="btn btn-cat" data-cat="秘書" onclick="setCategory(this)">秘書</button>
+        <button class="btn btn-cat" data-cat="ライティング" onclick="setCategory(this)">ライティング</button>
+        <button class="btn btn-cat" data-cat="データ入力" onclick="setCategory(this)">データ入力・集計</button>
+        <button class="btn btn-cat" data-cat="動画編集" onclick="setCategory(this)">動画編集</button>
+        <button class="btn btn-cat" data-cat="Web制作" onclick="setCategory(this)">Web制作</button>
+        <button class="btn btn-cat" data-cat="SNS" onclick="setCategory(this)">SNS運用</button>
+        <button class="btn btn-cat" data-cat="LINE" onclick="setCategory(this)">LINE構築</button>
+      </div>
+
+      <!-- Copy & Count -->
+      <div class="action-row">
+        <button id="copyBtn" class="btn btn-copy" onclick="copyChatworkIds()">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+          表示中メンバーのChatwork IDをコピー
+        </button>
+        <span id="memberCount" class="member-count"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading -->
+  <div id="loading" class="loading">
+    <div class="spinner"></div>
+    <p>データを読み込み中...</p>
+  </div>
+
+  <!-- Empty state -->
+  <div id="emptyState" class="empty-state" style="display:none;">
+    <p>該当するメンバーが見つかりません</p>
+  </div>
+
+  <!-- Member Grid -->
+  <main class="main">
+    <div id="memberGrid" class="member-grid"></div>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <footer class="footer">
+    <p>&copy; リベ大オンライン秘書</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
