@@ -3,17 +3,76 @@ const SHEET_ID = '1KDWJkgtxdMzW2sefWNFfU4MM9x0bBhZw5-SeNMQwKtI';
 const GID = '514561957';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
 
-// Category keywords mapping
+// Chatwork avatar mapping (account_id → avatar_image_url)
+const AVATARS = {
+  2160795: 'https://appdata.chatwork.com/avatar/B7WORKLK7J.rsz.png',
+  2462061: 'https://appdata.chatwork.com/avatar/6MQ3nzoEAW.png',
+  3150272: 'https://appdata.chatwork.com/avatar/5AdX64XnA2.png',
+  4115870: 'https://appdata.chatwork.com/avatar/w7zBR0gR7l.png',
+  4116014: 'https://appdata.chatwork.com/avatar/Vq3Wnjmrql.png',
+  4178191: 'https://appdata.chatwork.com/avatar/6MoQkp9wA8.png',
+  5281342: 'https://appdata.chatwork.com/avatar/dqvodQjeAz.png',
+  5501140: 'https://appdata.chatwork.com/avatar/d7ganpLJqp.png',
+  5570590: 'https://appdata.chatwork.com/avatar/374B4BeBqn.png',
+  6170843: 'https://appdata.chatwork.com/avatar/d7gaR3Q5qp.png',
+  6549800: 'https://appdata.chatwork.com/avatar/JqnW5m41AD.png',
+  6688550: 'https://appdata.chatwork.com/avatar/oMp4n9DdM6.png',
+  6811051: 'https://appdata.chatwork.com/avatar/4MlnyGL6A5.png',
+  7019620: 'https://appdata.chatwork.com/avatar/bqJLDZ6K70.png',
+  7086699: 'https://appdata.chatwork.com/avatar/d75Bz8D8M2.png',
+  7266150: 'https://appdata.chatwork.com/avatar/Yq9eBn0bqW.png',
+  7419912: 'https://appdata.chatwork.com/avatar/2Akb8bOBq0.png',
+  7490926: 'https://appdata.chatwork.com/avatar/PMKB3jw17Y.png',
+  7641229: 'https://appdata.chatwork.com/avatar/Vq3WYvj2ql.png',
+  7647679: 'https://appdata.chatwork.com/avatar/RMbaEOzP70.png',
+  7810263: 'https://appdata.chatwork.com/avatar/EMypo5Nd7B.png',
+  7945573: 'https://appdata.chatwork.com/avatar/374Wg2ZyAn.png',
+  7989950: 'https://appdata.chatwork.com/avatar/EMyJ0RdYqB.png',
+  8052239: 'https://appdata.chatwork.com/avatar/6MoQkXvlA8.png',
+  8109399: 'https://appdata.chatwork.com/avatar/R769Z3NpAr.rsz.png',
+  8194031: 'https://appdata.chatwork.com/avatar/RMOrmkvw7G.png',
+  8286281: 'https://appdata.chatwork.com/avatar/4MlE2zzaq5.rsz.png',
+  8390419: 'https://appdata.chatwork.com/avatar/1qGm5pnQ7e.png',
+  8647030: 'https://appdata.chatwork.com/avatar/372JnXD975.png',
+  8681032: 'https://appdata.chatwork.com/avatar/6MQp6d9O7W.png',
+  8899783: 'https://appdata.chatwork.com/avatar/W781yGnNMJ.rsz.png',
+  9011407: 'https://appdata.chatwork.com/avatar/6MoQd9k0A8.rsz.png',
+  9068468: 'https://appdata.chatwork.com/avatar/PMKBve827Y.rsz.jpg',
+  9069676: 'https://appdata.chatwork.com/avatar/RAXo2j5Yqr.png',
+  9138591: 'https://appdata.chatwork.com/avatar/oq0kVKmLMZ.png',
+  9164819: 'https://appdata.chatwork.com/avatar/LqjP3lP07N.png',
+  9252102: 'https://appdata.chatwork.com/avatar/PMKnjVy37Y.png',
+  9585669: 'https://appdata.chatwork.com/avatar/OqaoBPaz76.png',
+  9681577: 'https://appdata.chatwork.com/avatar/PAZmE1BrqE.png',
+  9787577: 'https://appdata.chatwork.com/avatar/1qGYB3Qj7e.png',
+  9814525: 'https://appdata.chatwork.com/avatar/4AVg284O7V.png',
+  9876825: 'https://appdata.chatwork.com/avatar/VqL6z6lE7N.png',
+  9977431: 'https://appdata.chatwork.com/avatar/d75BmbgJM2.rsz.jpg',
+  10031553: 'https://appdata.chatwork.com/avatar/xArWLJvL7D.png',
+  10185734: 'https://appdata.chatwork.com/avatar/Vq3WYvnbql.png',
+  10310025: 'https://appdata.chatwork.com/avatar/4Mlnz8mKA5.png',
+  10444300: 'https://appdata.chatwork.com/avatar/oq0kV2xJMZ.png',
+  10508877: 'https://appdata.chatwork.com/avatar/oMp4dOWZM6.png',
+  10577606: 'https://appdata.chatwork.com/avatar/374BkzOXqn.rsz.png',
+  10579701: 'https://appdata.chatwork.com/avatar/EMyJ64mvqB.rsz.png',
+  10604994: 'https://appdata.chatwork.com/avatar/LqjPdY2b7N.rsz.png',
+  10667166: 'https://appdata.chatwork.com/avatar/OMNOyYZEq3.png',
+  10704425: 'https://appdata.chatwork.com/avatar/dqvoZ3lwAz.rsz.png',
+  10785054: 'https://appdata.chatwork.com/avatar/KqD8b4p5qz.rsz.jpg',
+};
+
+// Category keywords mapping — skills列のみで判定
 const CATEGORIES = {
-  'デザイン': ['デザイン', 'Canva', 'Illustrator', 'Photoshop', 'Figma', 'バナー', 'サムネイル', 'ロゴ', 'チラシ', '名刺'],
-  '経理': ['経理', '仕訳', '請求書', '入金消込', '給与計算', '記帳', '会計', '経費', '簿記', 'マネーフォワード', 'マネフォ', '弥生'],
-  '秘書': ['秘書', 'スケジュール', 'リサーチ', 'メール対応', '出張', '会食', '日程調整'],
-  'ライティング': ['ライティング', 'WordPress', 'ブログ', '記事', '入稿', '執筆', 'SEO', '台本', '文章作成', '校正'],
-  'データ入力': ['データ入力', 'データ集計', 'データ整理', 'データ分析', 'Excel', 'エクセル', 'スプレッドシート', 'スプシ', 'ピボット', '関数'],
-  '動画編集': ['動画編集', 'PremierePro', 'Premiere Pro', 'CapCut', 'Filmora', 'vllo', 'リール'],
-  'Web制作': ['Web制作', 'ホームページ', 'HP', 'WordPress', 'コーディング', 'HTML', 'CSS', 'Studio', 'LP'],
-  'SNS': ['SNS', 'Instagram', 'インスタ', 'X運用', 'X投稿', 'Twitter'],
-  'LINE': ['LINE', 'エルメ', 'Lステップ', 'リッチメニュー', '公式LINE'],
+  'デザイン': ['デザイン', 'Illustrator', 'Photoshop', 'Figma', 'バナー', 'サムネイル', 'ロゴ', 'チラシ', '名刺', 'アイキャッチ'],
+  '経理': ['経理', '仕訳', '入金消込', '記帳代行', '会計', '簿記', '弥生'],
+  '秘書': ['秘書業務', 'スケジュール調整', 'スケジュール管理', '日程調整', '出張', '会食'],
+  'ライティング': ['ライティング', 'SEO', '台本', '記事作成', '記事制作', '校正', '執筆'],
+  'データ入力': ['データ入力', 'データ集計', 'データ整理', 'データ分析', 'データベース構築', 'ピボット'],
+  '動画編集': ['動画編集', 'PremierePro', 'Premiere Pro', 'PrPro', 'CapCut', 'Filmora', 'vllo'],
+  'Web制作': ['Web制作', 'WEB制作', 'ホームページ制作', 'ホームページ製作', 'HP制作', 'HP作成', 'コーディング', 'HTML', 'LP制作', 'Studio'],
+  'SNS': ['SNS運用', 'SNS代行', 'SNS投稿', 'Instagram運用', 'インスタ運用', 'X運用'],
+  'LINE': ['LINE構築', 'Lステップ', 'エルメ', 'L Message', '公式LINE'],
+  '労務・人事': ['給与計算', '社会保険', '労働保険', '労務', '人事', '採用'],
 };
 
 // ===== State =====
@@ -39,6 +98,7 @@ async function fetchData() {
     const res = await fetch(CSV_URL);
     const text = await res.text();
     allMembers = parseCSV(text);
+    populatePrefectureDropdown();
     applyFilters();
 
     const now = new Date();
@@ -53,12 +113,10 @@ async function fetchData() {
 }
 
 function parseCSV(text) {
-  const rows = [];
   let current = '';
   let inQuotes = false;
   const lines = [];
 
-  // Handle quoted fields with newlines
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
     if (ch === '"') {
@@ -72,14 +130,14 @@ function parseCSV(text) {
       lines.push(current);
       current = '';
     } else if (ch === '\r' && !inQuotes) {
-      // skip \r
+      // skip
     } else {
       current += ch;
     }
   }
   if (current) lines.push(current);
 
-  // Parse each line into fields
+  const rows = [];
   for (const line of lines) {
     const fields = [];
     let field = '';
@@ -106,18 +164,20 @@ function parseCSV(text) {
 
   if (rows.length < 2) return [];
 
-  const headers = rows[0];
   const members = [];
-
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i];
-    if (!r[1] || !r[1].trim()) continue; // skip empty name
+    if (!r[1] || !r[1].trim()) continue;
+
+    const chatworkTo = (r[3] || '').trim();
+    const accountId = extractAccountId(chatworkTo);
 
     members.push({
       role: (r[0] || '').trim(),
       name: (r[1] || '').trim(),
       intro: (r[2] || '').trim(),
-      chatworkTo: (r[3] || '').trim(),
+      chatworkTo,
+      accountId,
       cityUrl: (r[4] || '').trim(),
       email: (r[5] || '').trim(),
       displayName: (r[6] || '').trim(),
@@ -125,10 +185,31 @@ function parseCSV(text) {
       prefecture: (r[8] || '').trim(),
       availability: (r[9] || '').trim(),
       skills: (r[10] || '').trim(),
+      isManager: (r[0] || '').includes('責任者'),
     });
   }
 
   return members;
+}
+
+function extractAccountId(toStr) {
+  const m = toStr.match(/\[To:(\d+)\]/);
+  return m ? parseInt(m[1], 10) : null;
+}
+
+// ===== Prefecture Dropdown =====
+function populatePrefectureDropdown() {
+  const select = document.getElementById('prefectureFilter');
+  const prefs = [...new Set(allMembers.map(m => m.prefecture).filter(p => p))].sort();
+
+  // Clear existing options except first
+  select.innerHTML = '<option value="">居住地で絞り込み...</option>';
+  for (const p of prefs) {
+    const opt = document.createElement('option');
+    opt.value = p;
+    opt.textContent = p;
+    select.appendChild(opt);
+  }
 }
 
 // ===== Filters =====
@@ -142,18 +223,22 @@ function setCategory(btn) {
 function applyFilters() {
   const nameQuery = document.getElementById('nameSearch').value.trim().toLowerCase();
   const skillQuery = document.getElementById('skillSearch').value.trim().toLowerCase();
+  const prefQuery = document.getElementById('prefectureFilter').value;
 
   filteredMembers = allMembers.filter(m => {
     // Name filter
     if (nameQuery && !m.name.toLowerCase().includes(nameQuery)) return false;
 
-    // Skill text filter
+    // Skill text filter (searches skills + intro)
     if (skillQuery && !m.skills.toLowerCase().includes(skillQuery) && !m.intro.toLowerCase().includes(skillQuery)) return false;
 
-    // Category filter
+    // Prefecture filter
+    if (prefQuery && m.prefecture !== prefQuery) return false;
+
+    // Category filter — skills列のみで判定
     if (activeCategory !== 'all') {
       const keywords = CATEGORIES[activeCategory] || [];
-      const text = (m.skills + ' ' + m.intro).toLowerCase();
+      const text = m.skills.toLowerCase();
       const match = keywords.some(kw => text.includes(kw.toLowerCase()));
       if (!match) return false;
     }
@@ -186,10 +271,10 @@ function renderGrid() {
 
 function cardHTML(m) {
   const initial = m.name.charAt(0);
-  const avatarUrl = getCityAvatarUrl(m.cityUrl);
+  const avatarUrl = m.accountId ? AVATARS[m.accountId] : null;
 
   const avatar = avatarUrl
-    ? `<img class="card-avatar" src="${avatarUrl}" alt="${escHTML(m.name)}" onerror="this.outerHTML='<div class=\\'card-avatar-placeholder\\'>${escHTML(initial)}</div>'">`
+    ? `<img class="card-avatar" src="${escAttr(avatarUrl)}" alt="${escHTML(m.name)}" onerror="this.outerHTML='<div class=\\'card-avatar-placeholder\\'>${escHTML(initial)}</div>'">`
     : `<div class="card-avatar-placeholder">${escHTML(initial)}</div>`;
 
   const role = m.role ? `<span class="card-role">${escHTML(m.role)}</span>` : '';
@@ -206,9 +291,10 @@ function cardHTML(m) {
   const introText = m.intro ? `<div class="card-intro" id="intro-${escAttr(m.name)}">${escHTML(m.intro)}</div>
     <button class="card-toggle-intro" onclick="toggleIntro(this)">もっと見る</button>` : '';
 
+  // Links & info
   const links = [];
   if (m.cityUrl) links.push(`<a href="${escAttr(m.cityUrl)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>シティ</a>`);
-  if (m.chatworkId) links.push(`<a href="https://www.chatwork.com/${escAttr(m.chatworkId)}" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>Chatwork</a>`);
+  if (m.chatworkId) links.push(`<span class="card-chatwork-id"><svg viewBox="0 0 24 24" width="14" height="14"><path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>${escHTML(m.chatworkId)}</span>`);
 
   return `<div class="card">
     <div class="card-header">
@@ -242,7 +328,7 @@ function extractSkillTags(text) {
     [/弥生/i, '弥生会計'],
     [/秘書|スケジュール調整/i, '秘書業務'],
     [/リサーチ/i, 'リサーチ'],
-    [/ライティング|記事/i, 'ライティング'],
+    [/ライティング/i, 'ライティング'],
     [/WordPress/i, 'WordPress'],
     [/データ入力/i, 'データ入力'],
     [/データ集計|データ整理|データ分析/i, 'データ集計・分析'],
@@ -251,16 +337,17 @@ function extractSkillTags(text) {
     [/動画編集/i, '動画編集'],
     [/PremierePro|Premiere Pro|PrPro/i, 'Premiere Pro'],
     [/CapCut/i, 'CapCut'],
-    [/Web制作|ホームページ制作|HP制作/i, 'Web制作'],
+    [/Web制作|WEB制作|ホームページ制作|ホームページ製作|HP制作/i, 'Web制作'],
     [/HTML|CSS/i, 'HTML/CSS'],
-    [/SNS|Instagram|インスタ/i, 'SNS運用'],
-    [/LINE構築|Lステップ|エルメ|リッチメニュー/i, 'LINE構築'],
+    [/SNS運用|SNS代行|Instagram運用|インスタ運用/i, 'SNS運用'],
+    [/LINE構築|Lステップ|エルメ|公式LINE/i, 'LINE構築'],
     [/GAS/i, 'GAS'],
     [/VBA|マクロ/i, 'VBA/マクロ'],
     [/Notion/i, 'Notion'],
     [/資料作成|マニュアル作成/i, '資料・マニュアル作成'],
     [/営業事務/i, '営業事務'],
-    [/人事/i, '人事'],
+    [/人事|採用/i, '人事'],
+    [/給与計算|社会保険|労務/i, '労務'],
     [/イラスト/i, 'イラスト'],
     [/簿記/i, '簿記'],
   ];
@@ -271,19 +358,12 @@ function extractSkillTags(text) {
   return [...tags].slice(0, 8);
 }
 
-// ===== City avatar URL =====
-function getCityAvatarUrl(cityUrl) {
-  // リベシティのプロフィールURLからユーザーIDを抽出
-  if (!cityUrl) return null;
-  const match = cityUrl.match(/user_profile\/([A-Za-z0-9]+)/);
-  if (!match) return null;
-  // リベシティのアバター画像はCORSで取得できない可能性が高いのでnull
-  return null;
-}
-
 // ===== Copy Chatwork IDs =====
 function copyChatworkIds() {
+  const includeManagers = document.getElementById('includeManagers').checked;
+
   const ids = filteredMembers
+    .filter(m => includeManagers || !m.isManager)
     .map(m => m.chatworkTo)
     .filter(id => id && id.trim());
 
@@ -296,7 +376,6 @@ function copyChatworkIds() {
   navigator.clipboard.writeText(text).then(() => {
     showToast(`${ids.length}名のChatwork IDをコピーしました`);
   }).catch(() => {
-    // fallback
     const ta = document.createElement('textarea');
     ta.value = text;
     document.body.appendChild(ta);
