@@ -4,61 +4,62 @@ const GID = '514561957';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
 
 // Chatwork avatar mapping (account_id → avatar_image_url)
+// Source: スタッフざつだんチャット (room 343633909) メンバー一覧
 const AVATARS = {
-  2160795: 'https://appdata.chatwork.com/avatar/B7WORKLK7J.rsz.png',
-  2462061: 'https://appdata.chatwork.com/avatar/6MQ3nzoEAW.png',
-  3150272: 'https://appdata.chatwork.com/avatar/5AdX64XnA2.png',
-  4115870: 'https://appdata.chatwork.com/avatar/w7zBR0gR7l.png',
-  4116014: 'https://appdata.chatwork.com/avatar/Vq3Wnjmrql.png',
-  4178191: 'https://appdata.chatwork.com/avatar/6MoQkp9wA8.png',
-  5281342: 'https://appdata.chatwork.com/avatar/dqvodQjeAz.png',
-  5501140: 'https://appdata.chatwork.com/avatar/d7ganpLJqp.png',
-  5570590: 'https://appdata.chatwork.com/avatar/374B4BeBqn.png',
-  6170843: 'https://appdata.chatwork.com/avatar/d7gaR3Q5qp.png',
-  6549800: 'https://appdata.chatwork.com/avatar/JqnW5m41AD.png',
-  6688550: 'https://appdata.chatwork.com/avatar/oMp4n9DdM6.png',
-  6811051: 'https://appdata.chatwork.com/avatar/4MlnyGL6A5.png',
-  7019620: 'https://appdata.chatwork.com/avatar/bqJLDZ6K70.png',
-  7086699: 'https://appdata.chatwork.com/avatar/d75Bz8D8M2.png',
-  7266150: 'https://appdata.chatwork.com/avatar/Yq9eBn0bqW.png',
-  7419912: 'https://appdata.chatwork.com/avatar/2Akb8bOBq0.png',
-  7490926: 'https://appdata.chatwork.com/avatar/PMKB3jw17Y.png',
-  7641229: 'https://appdata.chatwork.com/avatar/Vq3WYvj2ql.png',
-  7647679: 'https://appdata.chatwork.com/avatar/RMbaEOzP70.png',
-  7810263: 'https://appdata.chatwork.com/avatar/EMypo5Nd7B.png',
-  7945573: 'https://appdata.chatwork.com/avatar/374Wg2ZyAn.png',
-  7989950: 'https://appdata.chatwork.com/avatar/EMyJ0RdYqB.png',
-  8052239: 'https://appdata.chatwork.com/avatar/6MoQkXvlA8.png',
-  8109399: 'https://appdata.chatwork.com/avatar/R769Z3NpAr.rsz.png',
-  8194031: 'https://appdata.chatwork.com/avatar/RMOrmkvw7G.png',
-  8286281: 'https://appdata.chatwork.com/avatar/4MlE2zzaq5.rsz.png',
-  8390419: 'https://appdata.chatwork.com/avatar/1qGm5pnQ7e.png',
-  8647030: 'https://appdata.chatwork.com/avatar/372JnXD975.png',
-  8681032: 'https://appdata.chatwork.com/avatar/6MQp6d9O7W.png',
-  8899783: 'https://appdata.chatwork.com/avatar/W781yGnNMJ.rsz.png',
-  9011407: 'https://appdata.chatwork.com/avatar/6MoQd9k0A8.rsz.png',
-  9068468: 'https://appdata.chatwork.com/avatar/PMKBve827Y.rsz.jpg',
-  9069676: 'https://appdata.chatwork.com/avatar/RAXo2j5Yqr.png',
-  9138591: 'https://appdata.chatwork.com/avatar/oq0kVKmLMZ.png',
-  9164819: 'https://appdata.chatwork.com/avatar/LqjP3lP07N.png',
-  9252102: 'https://appdata.chatwork.com/avatar/PMKnjVy37Y.png',
-  9585669: 'https://appdata.chatwork.com/avatar/OqaoBPaz76.png',
-  9681577: 'https://appdata.chatwork.com/avatar/PAZmE1BrqE.png',
-  9787577: 'https://appdata.chatwork.com/avatar/1qGYB3Qj7e.png',
-  9814525: 'https://appdata.chatwork.com/avatar/4AVg284O7V.png',
-  9876825: 'https://appdata.chatwork.com/avatar/VqL6z6lE7N.png',
-  9977431: 'https://appdata.chatwork.com/avatar/d75BmbgJM2.rsz.jpg',
-  10031553: 'https://appdata.chatwork.com/avatar/xArWLJvL7D.png',
-  10185734: 'https://appdata.chatwork.com/avatar/Vq3WYvnbql.png',
-  10310025: 'https://appdata.chatwork.com/avatar/4Mlnz8mKA5.png',
-  10444300: 'https://appdata.chatwork.com/avatar/oq0kV2xJMZ.png',
-  10508877: 'https://appdata.chatwork.com/avatar/oMp4dOWZM6.png',
-  10577606: 'https://appdata.chatwork.com/avatar/374BkzOXqn.rsz.png',
-  10579701: 'https://appdata.chatwork.com/avatar/EMyJ64mvqB.rsz.png',
-  10604994: 'https://appdata.chatwork.com/avatar/LqjPdY2b7N.rsz.png',
-  10667166: 'https://appdata.chatwork.com/avatar/OMNOyYZEq3.png',
-  10704425: 'https://appdata.chatwork.com/avatar/dqvoZ3lwAz.rsz.png',
-  10785054: 'https://appdata.chatwork.com/avatar/KqD8b4p5qz.rsz.jpg',
+  2160795: 'https://appdata.chatwork.com/avatar/B7WORKLK7J.rsz.png',    // ABB
+  3150272: 'https://appdata.chatwork.com/avatar/5AdX64XnA2.png',        // おいちゃん
+  3319640: 'https://appdata.chatwork.com/avatar/OMNoEaQDq3.rsz.png',    // あず
+  5389017: 'https://appdata.chatwork.com/avatar/VqLKERllMN.png',        // もい
+  5501140: 'https://appdata.chatwork.com/avatar/d7ganpLJqp.png',        // くまお
+  6549800: 'https://appdata.chatwork.com/avatar/JqnW5m41AD.png',        // あみ
+  6811051: 'https://appdata.chatwork.com/avatar/4MlnyGL6A5.png',        // かなみ
+  7019620: 'https://appdata.chatwork.com/avatar/bqJLDZ6K70.png',        // いんな
+  7086699: 'https://appdata.chatwork.com/avatar/d75Bz8D8M2.png',        // ミナト
+  7254665: 'https://appdata.chatwork.com/avatar/RMbaJVow70.png',        // くみ
+  7419912: 'https://appdata.chatwork.com/avatar/2Akb8bOBq0.png',        // ハリー
+  7466161: 'https://appdata.chatwork.com/avatar/1qGm4Lk67e.png',        // いちてぃ
+  7499443: 'https://appdata.chatwork.com/avatar/dqvodKGeAz.png',        // あおい
+  7641229: 'https://appdata.chatwork.com/avatar/Vq3WYvj2ql.png',        // たに
+  7785407: 'https://appdata.chatwork.com/avatar/GqRy8wa6Mw.rsz.jpg',    // ユカ
+  7806877: 'https://appdata.chatwork.com/avatar/d75Bgy18M2.rsz.png',    // かめ大福
+  7810263: 'https://appdata.chatwork.com/avatar/EMypo5Nd7B.png',        // さとぺりー
+  7940443: 'https://appdata.chatwork.com/avatar/OMBRpGnPMl.png',        // まめか
+  7989950: 'https://appdata.chatwork.com/avatar/EMyJ0RdYqB.png',        // まんまる
+  8217787: 'https://appdata.chatwork.com/avatar/rq15gQg4qj.rsz.png',    // ダン
+  8390419: 'https://appdata.chatwork.com/avatar/1qGm5pnQ7e.png',        // もっちゃん
+  8680899: 'https://appdata.chatwork.com/avatar/xArWL6mK7D.png',        // ちいとも
+  8760170: 'https://appdata.chatwork.com/avatar/VqPDJpgxqg.png',        // 渋皮マロン
+  8842346: 'https://appdata.chatwork.com/avatar/RMb5VnV570.png',        // マミ
+  8913571: 'https://appdata.chatwork.com/avatar/eAY4VyO0ql.png',        // ハチ
+  8972167: 'https://appdata.chatwork.com/avatar/d75BYBlNM2.rsz.png',    // やすひと
+  9011407: 'https://appdata.chatwork.com/avatar/6MoQd9k0A8.rsz.png',    // ぷぅちゃん
+  9033536: 'https://appdata.chatwork.com/avatar/zMEPJE6p73.png',        // すずちょこ
+  9068468: 'https://appdata.chatwork.com/avatar/PMKBve827Y.rsz.jpg',    // じゃぱ
+  9164819: 'https://appdata.chatwork.com/avatar/LqjP3lP07N.png',        // ともちゃむ
+  9183544: 'https://appdata.chatwork.com/avatar/OqaorlRO76.png',        // ヒロ
+  9401415: 'https://appdata.chatwork.com/avatar/374Wx3kxAn.png',        // たなけん
+  9585669: 'https://appdata.chatwork.com/avatar/OqaoBPaz76.png',        // ハナ
+  9787577: 'https://appdata.chatwork.com/avatar/1qGYB3Qj7e.png',        // あさみな
+  9799943: 'https://appdata.chatwork.com/avatar/1qGYr9Nz7e.rsz.png',    // ヨシア
+  9814525: 'https://appdata.chatwork.com/avatar/4AVg284O7V.png',        // ドーラ
+  10029532: 'https://appdata.chatwork.com/avatar/RMOrVzE07G.png',       // バッハ
+  10031553: 'https://appdata.chatwork.com/avatar/xArWLJvL7D.png',       // みほ
+  10086112: 'https://appdata.chatwork.com/avatar/LqjaVXJ9MN.rsz.jpg',   // カルム
+  10185585: 'https://appdata.chatwork.com/avatar/rq15jPb8qj.png',       // ゆきのさん
+  10185734: 'https://appdata.chatwork.com/avatar/Vq3WYvnbql.png',       // おいね
+  10310025: 'https://appdata.chatwork.com/avatar/4Mlnz8mKA5.png',       // ゆきんこ
+  10372624: 'https://appdata.chatwork.com/avatar/OMBRm0VbMl.png',       // みのすけ
+  10444300: 'https://appdata.chatwork.com/avatar/oq0kV2xJMZ.png',       // Hito
+  10566549: 'https://appdata.chatwork.com/avatar/VqPDe4xxqg.rsz.png',   // Misa
+  10579701: 'https://appdata.chatwork.com/avatar/EMyJ64mvqB.rsz.png',   // ほめこ
+  10604994: 'https://appdata.chatwork.com/avatar/LqjPdY2b7N.rsz.png',   // ろみん
+  10606707: 'https://appdata.chatwork.com/avatar/5AdX24nKA2.rsz.jpg',   // みっぴ
+  10677346: 'https://appdata.chatwork.com/avatar/dqvo2KgOAz.png',       // まるぺい
+  10715831: 'https://appdata.chatwork.com/avatar/JqnWkQmdAD.png',       // さつき
+  10783435: 'https://appdata.chatwork.com/avatar/EMyJpRpmqB.rsz.png',   // ひろぺ
+  10785054: 'https://appdata.chatwork.com/avatar/KqD8b4p5qz.rsz.jpg',   // ちええん
+  10932036: 'https://appdata.chatwork.com/avatar/2AkbJB03q0.rsz.png',   // あきやま
+  11043374: 'https://appdata.chatwork.com/avatar/6MQ3DQGaAW.png',       // ちーこ
 };
 
 // Category keywords mapping — skills列のみで判定
