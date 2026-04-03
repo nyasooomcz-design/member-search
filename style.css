@@ -351,6 +351,61 @@ body {
   border: 1px solid #d4eef3;
 }
 
+/* -- Tools -- */
+.card-tools {
+  margin-top: 4px;
+}
+.card-tools-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-light);
+  margin-bottom: 6px;
+}
+.card-tools-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.tool-tag {
+  font-size: 0.72rem;
+  padding: 3px 8px;
+  border-radius: 14px;
+  font-weight: 500;
+}
+.tool-expert {
+  background: #fff3e0;
+  color: #e65100;
+  border: 1px solid #ffcc80;
+}
+.tool-ok {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+}
+.tool-basic {
+  background: #f5f5f5;
+  color: #757575;
+  border: 1px solid #e0e0e0;
+}
+.card-tools-more {
+  margin-top: 6px;
+}
+.card-tools-more summary {
+  font-size: 0.78rem;
+  color: var(--primary);
+  cursor: pointer;
+  list-style: none;
+}
+.card-tools-more summary::before {
+  content: '+ ';
+}
+.card-tools-more[open] summary::before {
+  content: '- ';
+}
+.card-tools-more .card-tools-list {
+  margin-top: 6px;
+}
+
 .card-links {
   display: flex;
   flex-wrap: wrap;

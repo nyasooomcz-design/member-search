@@ -1,7 +1,9 @@
 // ===== Config =====
 const SHEET_ID = '1KDWJkgtxdMzW2sefWNFfU4MM9x0bBhZw5-SeNMQwKtI';
-const GID = '514561957';
-const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}`;
+const GID_MEMBERS = '514561957';
+const GID_TOOLS = '1154341038';
+const CSV_MEMBERS = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID_MEMBERS}`;
+const CSV_TOOLS = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID_TOOLS}`;
 
 // Chatwork avatar mapping (account_id → avatar_image_url)
 // Source: スタッフざつだんチャット (room 343633909) メンバー一覧
@@ -122,9 +124,21 @@ async function fetchData() {
   document.getElementById('emptyState').style.display = 'none';
 
   try {
-    const res = await fetch(CSV_URL);
-    const text = await res.text();
-    allMembers = parseCSV(text);
+    const [membersRes, toolsRes] = await Promise.all([
+      fetch(CSV_MEMBERS),
+      fetch(CSV_TOOLS),
+    ]);
+    const membersText = await membersRes.text();
+    const toolsText = await toolsRes.text();
+
+    const toolsMap = parseToolsSheet(toolsText);
+    allMembers = parseCSV(membersText);
+
+    // ツールデータをメンバーに紐付け
+    for (const m of allMembers) {
+      m.tools = toolsMap[m.name] || [];
+    }
+
     applyFilters();
 
     const now = new Date();
@@ -221,6 +235,95 @@ function extractAccountId(toStr) {
   return m ? parseInt(m[1], 10) : null;
 }
 
+// ===== Parse Tools Sheet =====
+// ヘッダー3行 + データ行の構造: 名前, PC①, PC②, Office, ...ツール名...
+function parseToolsSheet(text) {
+  const rows = parseCSVRows(text);
+  if (rows.length < 4) return {};
+
+  // 2行目: カテゴリ（大分類）、3行目: ツール名（小分類）
+  const categories = rows[1];
+  const toolNames = rows[2];
+
+  // カテゴリ名を前方の値で埋める（結合セル対応）
+  let lastCat = '';
+  for (let i = 1; i < categories.length; i++) {
+    if (categories[i]) lastCat = categories[i];
+    else categories[i] = lastCat;
+  }
+
+  // 名前 → ツール配列 のマップ生成
+  const map = {};
+  for (let i = 3; i < rows.length; i++) {
+    const r = rows[i];
+    const name = (r[0] || '').trim();
+    if (!name) continue;
+
+    const tools = [];
+    for (let j = 1; j < r.length; j++) {
+      const val = (r[j] || '').trim();
+      if (!val) continue;
+      // PCやOffice等の情報列はスキップ（◎〇▲を含む値のみ）
+      if (!/[◎〇▲]/.test(val)) continue;
+
+      const toolName = (toolNames[j] || '').trim();
+      if (!toolName) continue;
+
+      // レベルを抽出（複数ある場合は最高レベル）
+      let level = '▲';
+      if (val.includes('◎')) level = '◎';
+      else if (val.includes('〇')) level = '〇';
+
+      tools.push({ name: toolName, level, category: (categories[j] || '').trim() });
+    }
+    map[name] = tools;
+  }
+  return map;
+}
+
+// CSV行パーサー（共通）
+function parseCSVRows(text) {
+  let current = '';
+  let inQuotes = false;
+  const lines = [];
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    if (ch === '"') {
+      if (inQuotes && text[i + 1] === '"') { current += '"'; i++; }
+      else inQuotes = !inQuotes;
+    } else if (ch === '\n' && !inQuotes) {
+      lines.push(current); current = '';
+    } else if (ch === '\r' && !inQuotes) {
+      // skip
+    } else {
+      current += ch;
+    }
+  }
+  if (current) lines.push(current);
+
+  const rows = [];
+  for (const line of lines) {
+    const fields = [];
+    let field = '';
+    let q = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') {
+        if (q && line[i + 1] === '"') { field += '"'; i++; }
+        else q = !q;
+      } else if (ch === ',' && !q) {
+        fields.push(field); field = '';
+      } else {
+        field += ch;
+      }
+    }
+    fields.push(field);
+    rows.push(fields);
+  }
+  return rows;
+}
+
 // ===== Region Filter =====
 function setRegion(btn) {
   document.querySelectorAll('.btn-region').forEach(b => b.classList.remove('active'));
@@ -303,6 +406,9 @@ function cardHTML(m) {
     ? `<div class="card-skills">${skillTags.map(s => `<span class="skill-tag">${escHTML(s)}</span>`).join('')}</div>`
     : '';
 
+  // ツール情報（◎→〇→▲の順、◎のみ表示＋残りは開閉）
+  const toolsHTML = renderTools(m.tools || []);
+
   const introText = m.intro
     ? `<div class="card-intro">${escHTML(m.intro)}</div><button class="card-toggle-intro" onclick="toggleIntro(this)">もっと見る</button>`
     : '';
@@ -322,8 +428,43 @@ function cardHTML(m) {
     ${meta.length ? `<div class="card-meta">${meta.join('')}</div>` : ''}
     ${introText}
     ${skillsHTML}
+    ${toolsHTML}
     ${links.length ? `<div class="card-links">${links.join('')}</div>` : ''}
   </div>`;
+}
+
+// ===== Tools render =====
+function renderTools(tools) {
+  if (!tools.length) return '';
+
+  // レベル順にソート: ◎ > 〇 > ▲
+  const order = { '◎': 0, '〇': 1, '▲': 2 };
+  const sorted = [...tools].sort((a, b) => (order[a.level] || 9) - (order[b.level] || 9));
+
+  const expert = sorted.filter(t => t.level === '◎');
+  const rest = sorted.filter(t => t.level !== '◎');
+
+  let html = '<div class="card-tools">';
+  html += '<div class="card-tools-label">使用可能ツール</div>';
+
+  if (expert.length) {
+    html += '<div class="card-tools-list">';
+    html += expert.map(t => `<span class="tool-tag tool-expert" title="実務経験あり">${escHTML(t.name)}</span>`).join('');
+    html += '</div>';
+  }
+
+  if (rest.length) {
+    html += `<details class="card-tools-more"><summary>${rest.length}件のツール</summary><div class="card-tools-list">`;
+    html += rest.map(t => {
+      const cls = t.level === '〇' ? 'tool-ok' : 'tool-basic';
+      const title = t.level === '〇' ? 'ひと通り使える' : '使用経験少';
+      return `<span class="tool-tag ${cls}" title="${title}">${escHTML(t.name)}</span>`;
+    }).join('');
+    html += '</div></details>';
+  }
+
+  html += '</div>';
+  return html;
 }
 
 // ===== Skill tags extraction =====
